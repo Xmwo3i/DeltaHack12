@@ -55,6 +55,11 @@ body {
     font-weight: 800;
 }
 
+.logo-img{
+    width: 52px;
+    height:auto;
+}
+
 .logo span {
     background: linear-gradient(135deg, #00ff87, #00d4ff);
     -webkit-background-clip: text;
