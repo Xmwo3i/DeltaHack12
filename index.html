@@ -423,12 +423,12 @@
                         
                         // Detect movement - check if angle changed significantly
                         let moving = false;
-                        if (angleHistory.current.length >= 5 ) {
-                            const recent = angleHistory.current.slice(-5);
+                        if (angleHistory.current.length >= 10 ) {
+                            const recent = angleHistory.current.slice(-10);
                             const min = Math.min(...recent);
                             const max = Math.max(...recent);
                             const range = max - min;
-                            moving = range > (exercise.movementThreshold || 15);
+                            moving = range > (exercise.movementThreshold || 25);
                         }
                         setIsMoving(moving);
 
