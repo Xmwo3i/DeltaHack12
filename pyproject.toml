@@ -1,0 +1,15 @@
+[project]
+name = "formfit-voice-agent"
+version = "0.1.0"
+description = "AI Voice Fitness Coach with Real-time Form Analysis"
+requires-python = ">=3.10, <3.13"
+dependencies = [
+    "livekit-agents>=1.0.0",
+    "livekit-plugins-openai>=1.0.0",
+    "livekit-plugins-noise-cancellation>=1.0.0",
+    "python-dotenv>=1.0.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
