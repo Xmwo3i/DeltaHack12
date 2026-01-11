@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shoulder Press Form Checker</title>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/pose.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .video-container {
+            position: relative;
+            background: #000;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 30px;
+            aspect-ratio: 16/10;
+        }
+
+        video, canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1);
+        }
+
+        canvas {
+            z-index: 2;
+        }
+
+        .status-overlay {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            z-index: 3;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            pointer-events: none;
+        }
+
+        .status-box {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            border-radius: 12px;
+            color: white;
+        }
+
+        .status-box.good {
+            background: rgba(34, 197, 94, 0.9);
+        }
+
+        .status-box.bad {
+            background: rgba(239, 68, 68, 0.9);
+        }
+
+        .status-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .status-detail {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .angle-display {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+        }
+
+        .feedback-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .feedback-section h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .feedback-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .feedback-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #ef4444;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .feedback-item.good {
+            border-left-color: #22c55e;
+        }
+
+        .feedback-icon {
+            font-size: 1.3rem;
+        }
+
+        .instructions {
+            background: #e0e7ff;
+            border-radius: 15px;
+            padding: 25px;
+        }
+
+        .instructions h2 {
+            color: #4338ca;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .instructions ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .instructions li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #4338ca;
+        }
+
+        .instructions li::before {
+            content: "✓";
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            background: #4338ca;
+            color: white;
+            border-radius: 50%;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: white;
+            z-index: 10;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .fps-counter {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            z-index: 3;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .status-overlay {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💪 Shoulder Press Form Checker</h1>
+            <p>Real-time AI-powered form analysis with MediaPipe</p>
+        </div>
+
+        <div class="content">
+            <div class="video-container">
+                <video id="video" autoplay playsinline></video>
+                <canvas id="canvas"></canvas>
+                
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <div>Loading camera...</div>
+                </div>
+
+                <div class="fps-counter" id="fps">0 FPS</div>
+
+                <div class="status-overlay" id="overlay" style="display: none;">
+                    <div class="status-box" id="statusBox">
+                        <div class="status-text" id="statusText">GOOD FORM!</div>
+                        <div class="status-detail">Keep it up</div>
+                    </div>
+                    <div class="angle-display" id="angleDisplay">
+                        <div>Left: 0°</div>
+                        <div>Right: 0°</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="feedback-section">
+                <h2>📋 Form Feedback</h2>
+                <div class="feedback-list" id="feedbackList">
+                    <div class="feedback-item good">
+                        <span class="feedback-icon">✓</span>
+                        <span>Start exercising to see feedback</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="instructions">
+                <h2>📖 Shoulder Press Tips</h2>
+                <ul>
+                    <li>Stand with feet shoulder-width apart</li>
+                    <li>Start with weights at shoulder height</li>
+                    <li>Press straight up overhead</li>
+                    <li>Stack wrists over elbows throughout movement</li>
+                    <li>Lower with control back to starting position</li>
+                    <li>Keep arms moving evenly (symmetry is key)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const loading = document.getElementById('loading');
+        const overlay = document.getElementById('overlay');
+        const statusBox = document.getElementById('statusBox');
+        const statusText = document.getElementById('statusText');
+        const angleDisplay = document.getElementById('angleDisplay');
+        const feedbackList = document.getElementById('feedbackList');
+        const fpsDisplay = document.getElementById('fps');
+
+        let pose;
+        let frameCount = 0;
+        let lastFpsTime = Date.now();
+
+        // Landmark indices
+        const LEFT_SHOULDER = 11;
+        const LEFT_ELBOW = 13;
+        const LEFT_WRIST = 15;
+        const RIGHT_SHOULDER = 12;
+        const RIGHT_ELBOW = 14;
+        const RIGHT_WRIST = 16;
+
+        // Calculate angle between three points
+        function calculateAngle(a, b, c) {
+            const v1x = a.x - b.x;
+            const v1y = a.y - b.y;
+            const v2x = c.x - b.x;
+            const v2y = c.y - b.y;
+            
+            const dot = v1x * v2x + v1y * v2y;
+            const mag1 = Math.sqrt(v1x * v1x + v1y * v1y);
+            const mag2 = Math.sqrt(v2x * v2x + v2y * v2y);
+            
+            const cosAngle = Math.max(-1, Math.min(1, dot / (mag1 * mag2 + 0.001)));
+            return Math.acos(cosAngle) * 57.2958; // Convert to degrees
+        }
+
+        // Check shoulder press form
+        function checkShoulderPressForm(landmarks) {
+            const leftShoulder = landmarks[LEFT_SHOULDER];
+            const leftElbow = landmarks[LEFT_ELBOW];
+            const leftWrist = landmarks[LEFT_WRIST];
+            const rightShoulder = landmarks[RIGHT_SHOULDER];
+            const rightElbow = landmarks[RIGHT_ELBOW];
+            const rightWrist = landmarks[RIGHT_WRIST];
+
+            // Calculate elbow angles
+            const leftElbowAngle = calculateAngle(leftShoulder, leftElbow, leftWrist);
+            const rightElbowAngle = calculateAngle(rightShoulder, rightElbow, rightWrist);
+
+            const errors = [];
+
+            // Symmetry check
+            if (Math.abs(leftElbowAngle - rightElbowAngle) > 20) {
+                errors.push("Keep arms moving evenly");
+            }
+
+            // Elbow-over-wrist check
+            const lwX = leftWrist.x;
+            const leX = leftElbow.x;
+            const rwX = rightWrist.x;
+            const reX = rightElbow.x;
+
+            if (Math.abs(leX - lwX) > 0.05 || Math.abs(reX - rwX) > 0.05) {
+                errors.push("Stack wrists over elbows");
+            }
+
+            return {
+                isCorrect: errors.length === 0,
+                errors: errors,
+                leftAngle: Math.round(leftElbowAngle),
+                rightAngle: Math.round(rightElbowAngle)
+            };
+        }
+
+        // Draw skeleton
+        function drawSkeleton(landmarks, color) {
+            const connections = [
+                [11, 12], // Shoulders
+                [11, 13], [13, 15], // Left arm
+                [12, 14], [14, 16], // Right arm
+                [11, 23], [12, 24], [23, 24] // Torso
+            ];
+
+            // Draw connections
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 3;
+            connections.forEach(([start, end]) => {
+                const startPoint = landmarks[start];
+                const endPoint = landmarks[end];
+                ctx.beginPath();
+                ctx.moveTo(startPoint.x * canvas.width, startPoint.y * canvas.height);
+                ctx.lineTo(endPoint.x * canvas.width, endPoint.y * canvas.height);
+                ctx.stroke();
+            });
+
+            // Draw joints
+            ctx.fillStyle = color;
+            [11, 12, 13, 14, 15, 16, 23, 24].forEach(i => {
+                const point = landmarks[i];
+                ctx.beginPath();
+                ctx.arc(point.x * canvas.width, point.y * canvas.height, 6, 0, Math.PI * 2);
+                ctx.fill();
+            });
+        }
+
+        // Update UI
+        function updateUI(result) {
+            statusBox.className = 'status-box ' + (result.isCorrect ? 'good' : 'bad');
+            statusText.textContent = result.isCorrect ? 'GOOD FORM!' : 'FIX FORM';
+
+            angleDisplay.innerHTML = `
+                <div>Left: ${result.leftAngle}°</div>
+                <div>Right: ${result.rightAngle}°</div>
+            `;
+
+            if (result.isCorrect) {
+                feedbackList.innerHTML = `
+                    <div class="feedback-item good">
+                        <span class="feedback-icon">✓</span>
+                        <span>Perfect form! Keep it up!</span>
+                    </div>
+                `;
+            } else {
+                feedbackList.innerHTML = result.errors.map(error => `
+                    <div class="feedback-item">
+                        <span class="feedback-icon">!</span>
+                        <span>${error}</span>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Process results
+        function onResults(results) {
+            // Update FPS
+            frameCount++;
+            const now = Date.now();
+            if (now - lastFpsTime >= 1000) {
+                fpsDisplay.textContent = `${frameCount} FPS`;
+                frameCount = 0;
+                lastFpsTime = now;
+            }
+
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            if (results.poseLandmarks) {
+                const landmarks = results.poseLandmarks;
+                
+                // Check form
+                const formResult = checkShoulderPressForm(landmarks);
+                
+                // Update UI
+                updateUI(formResult);
+                
+                // Draw skeleton
+                const color = formResult.isCorrect ? '#22c55e' : '#ef4444';
+                drawSkeleton(landmarks, color);
+            }
+        }
+
+        // Initialize
+        async function init() {
+            try {
+                // Setup camera
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { width: 640, height: 480, facingMode: 'user' }
+                });
+                
+                video.srcObject = stream;
+                await video.play();
+
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+
+                // Initialize MediaPipe Pose
+                pose = new Pose({
+                    locateFile: (file) => {
+                        return `https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/${file}`;
+                    }
+                });
+
+                pose.setOptions({
+                    modelComplexity: 0, // Lite model for speed
+                    smoothLandmarks: true,
+                    enableSegmentation: false,
+                    minDetectionConfidence: 0.5,
+                    minTrackingConfidence: 0.5
+                });
+
+                pose.onResults(onResults);
+
+                // Hide loading, show overlay
+                loading.style.display = 'none';
+                overlay.style.display = 'flex';
+
+                // Process frames
+                async function processFrame() {
+                    await pose.send({ image: video });
+                    requestAnimationFrame(processFrame);
+                }
+                processFrame();
+
+            } catch (error) {
+                console.error('Error:', error);
+                loading.innerHTML = '<div>Error: Camera access denied</div>';
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>

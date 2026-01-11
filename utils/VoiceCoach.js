@@ -7,7 +7,7 @@ class VoiceCoach {
         this.synth = window.speechSynthesis;
         this.enabled = true;
         this.lastSpoke = 0;
-        this.minGap = 6000;
+        this.minGap = 3000;
         this.speaking = false;
         this.message = "";
         this.onChange = null;
