@@ -8,7 +8,7 @@ const EXERCISES = [
         name: "Shoulder Press",
         category: "Shoulders",
         difficulty: "Beginner",
-        gif: "https://media1.tenor.com/m/gI-8qCUEko8AAAAC/shoulders-workout.gif",
+        gif: "https://media1.tenor.com/m/T_vqvD5qG-YAAAAC/shoulder-press-seated-shoulder-press.gif",
         muscles: ["Deltoids", "Triceps"],
         description: "Press weights overhead to build shoulders",
         phases: {
@@ -27,7 +27,7 @@ const EXERCISES = [
         name: "Squat",
         category: "Legs",
         difficulty: "Intermediate",
-        gif: "https://media1.tenor.com/m/ReGdjrNPi-8AAAAC/squat.gif",
+        gif: "https://media1.tenor.com/m/Pfj8vy41k-0AAAAC/gym.gif",
         muscles: ["Quads", "Glutes"],
         description: "King of leg exercises for lower body strength",
         phases: {
@@ -42,30 +42,11 @@ const EXERCISES = [
         ]
     },
     {
-        id: "bicep_curl",
-        name: "Bicep Curl",
-        category: "Arms",
-        difficulty: "Beginner",
-        gif: "https://media1.tenor.com/m/bnaCLz-vfj4AAAAC/bicep-curls-exercise.gif",
-        muscles: ["Biceps"],
-        description: "Isolate and build your biceps",
-        phases: {
-            DOWN: { left_elbow: [150, 180], right_elbow: [150, 180] },
-            UP: { left_elbow: [30, 70], right_elbow: [30, 70] }
-        },
-        tips: [
-            "Arms at sides",
-            "Elbows pinned to body",
-            "Curl to shoulders",
-            "Lower slowly"
-        ]
-    },
-    {
         id: "pushup",
         name: "Push Up",
         category: "Chest",
         difficulty: "Beginner",
-        gif: "https://media1.tenor.com/m/pyjEpw7tVD0AAAAC/pushups-push-up.gif",
+        gif: "https://media1.tenor.com/m/EEJO0ylQ8tAAAAAC/flexiones-basicas.gif",
         muscles: ["Chest", "Triceps"],
         description: "Classic upper body pushing exercise",
         phases: {
@@ -84,7 +65,7 @@ const EXERCISES = [
         name: "Lunge",
         category: "Legs",
         difficulty: "Beginner",
-        gif: "https://media1.tenor.com/m/5i0VeuJQkxkAAAAd/lunges.gif",
+        gif: "https://media1.tenor.com/m/sZ7VwZ6jrbcAAAAC/gym.gif",
         muscles: ["Quads", "Glutes"],
         description: "Build unilateral leg strength",
         phases: {
@@ -103,7 +84,7 @@ const EXERCISES = [
         name: "Lateral Raise",
         category: "Shoulders",
         difficulty: "Beginner",
-        gif: "https://media1.tenor.com/m/m7PBpjXCkG4AAAAC/lateral-raise.gif",
+        gif: "https://media1.tenor.com/m/-OavRqpxSaEAAAAC/eleva%C3%A7%C3%A3o-lateral.gif",
         muscles: ["Side Delts"],
         description: "Isolate side delts for wider shoulders",
         phases: {

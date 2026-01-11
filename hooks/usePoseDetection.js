@@ -50,8 +50,8 @@ const usePoseDetection = (exercise, onRep) => {
                 setPhase(ph);
                 setFeedback(fb);
 
-                // Voice feedback every 4 seconds
-                if (now - lastFeedbackTime.current > 4000) {
+                // Voice feedback every 6 seconds
+                if (now - lastFeedbackTime.current > 6000) {
                     voiceCoach.speak(voiceCoach.getFeedback(acc, fb));
                     lastFeedbackTime.current = now;
                 }

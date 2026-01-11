@@ -7,7 +7,7 @@ class VoiceCoach {
         this.synth = window.speechSynthesis;
         this.enabled = true;
         this.lastSpoke = 0;
-        this.minGap = 3500;
+        this.minGap = 6000;
         this.speaking = false;
         this.message = "";
         this.onChange = null;
@@ -56,12 +56,12 @@ class VoiceCoach {
     }
 
     getFeedback(accuracy, feedback) {
-        if (accuracy >= 90) {
+        if (accuracy >= 95) {
             const goodMessages = ["Perfect!", "Great form!", "Excellent!", "You're crushing it!"];
             return goodMessages[Math.floor(Math.random() * goodMessages.length)];
         }
         
-        if (accuracy >= 75) {
+        if (accuracy >= 85) {
             return "Good! Keep going!";
         }
         
