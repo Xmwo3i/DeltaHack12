@@ -55,6 +55,11 @@ body {
     font-weight: 800;
 }
 
+.logo-img{
+    width: 52px;
+    height:auto;
+}
+
 .logo span {
     background: linear-gradient(135deg, #00ff87, #00d4ff);
     -webkit-background-clip: text;
@@ -714,52 +719,4 @@ body {
     .grid {
         grid-template-columns: 1fr;
     }
-}
-/* ============================================================
-   ADDITIONAL STYLES FOR PYTHON-STYLE FORM CHECKING
-   Add these to your main.css
-   ============================================================ */
-
-/* Form Status Box (replaces accuracy box) */
-.form-status-box {
-    top: 16px;
-    left: 16px;
-}
-
-.form-status-box .value.good {
-    color: var(--accent-primary);
-}
-
-.form-status-box .value.bad {
-    color: var(--accent-error);
-}
-
-/* Angles Box */
-.angles-box {
-    top: 16px;
-    right: 16px;
-    text-align: center;
-}
-
-.angles-box .angles-value {
-    font-size: 16px;
-    color: var(--accent-secondary);
-    margin-bottom: 4px;
-}
-
-.angles-box .phase-value {
-    font-size: 14px;
-    color: var(--accent-purple);
-    font-weight: 600;
-}
-
-/* Warning feedback item */
-.feedback-item.warning {
-    background: rgba(255, 170, 0, 0.1);
-    border-left: 3px solid var(--accent-warning);
-}
-
-/* Accent warning color variable (add to :root) */
-:root {
-    --accent-warning: #ffaa00;
 }

@@ -9,7 +9,735 @@
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/pose.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="./style/main.css">
+    <style>
+/* ============================================================
+   FORMFIT AI - STYLES
+   ============================================================ */
+
+:root {
+    --bg-dark: #0a0a0b;
+    --bg-card: #141418;
+    --accent-primary: #00ff87;
+    --accent-secondary: #00d4ff;
+    --accent-error: #ff3860;
+    --accent-purple: #a855f7;
+    --text-primary: #ffffff;
+    --text-secondary: #8a8a9a;
+    --border-subtle: #2a2a35;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    min-height: 100vh;
+}
+
+.app {
+    min-height: 100vh;
+}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+
+.header {
+    padding: 16px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-subtle);
+    background: rgba(10, 10, 11, 0.95);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.logo span {
+    background: linear-gradient(135deg, #00ff87, #00d4ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.stat {
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--accent-primary);
+}
+
+.stat-label {
+    font-size: 11px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+}
+
+/* ============================================================
+   MAIN CONTENT
+   ============================================================ */
+
+.main {
+    padding: 32px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+/* ============================================================
+   VOICE BANNER
+   ============================================================ */
+
+.voice-banner {
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(99, 102, 241, 0.15));
+    border: 1px solid rgba(168, 85, 247, 0.3);
+    border-radius: 16px;
+    padding: 16px 24px;
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.voice-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #a855f7, #6366f1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    transition: box-shadow 0.3s;
+}
+
+.voice-avatar.speaking {
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
+}
+
+.voice-info {
+    flex: 1;
+}
+
+.voice-title {
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.voice-status {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+
+.btn {
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+}
+
+.btn-purple {
+    background: linear-gradient(135deg, #a855f7, #6366f1);
+    color: white;
+}
+
+.btn-purple:hover {
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #00ff87, #00d4ff);
+    color: #0a0a0b;
+}
+
+.btn-primary:hover {
+    box-shadow: 0 0 20px rgba(0, 255, 135, 0.4);
+}
+
+.btn-secondary {
+    background: transparent;
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+}
+
+.btn-secondary:hover {
+    border-color: var(--accent-primary);
+}
+
+.btn-danger {
+    background: rgba(255, 56, 96, 0.2);
+    color: var(--accent-error);
+}
+
+.btn-danger:hover {
+    background: var(--accent-error);
+    color: white;
+}
+
+.btn-full {
+    width: 100%;
+}
+
+/* ============================================================
+   PAGE TITLE
+   ============================================================ */
+
+.page-title {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.page-title h1 {
+    font-size: 36px;
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+.page-title p {
+    color: var(--text-secondary);
+}
+
+/* ============================================================
+   CATEGORY TABS
+   ============================================================ */
+
+.tabs {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+}
+
+.tab {
+    padding: 10px 20px;
+    border-radius: 100px;
+    border: 1px solid var(--border-subtle);
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.tab:hover {
+    border-color: var(--accent-primary);
+    color: white;
+}
+
+.tab.active {
+    background: linear-gradient(135deg, #00ff87, #00d4ff);
+    border-color: transparent;
+    color: #0a0a0b;
+    font-weight: 600;
+}
+
+/* ============================================================
+   EXERCISE GRID & CARDS
+   ============================================================ */
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 20px;
+}
+
+.card {
+    background: var(--bg-card);
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--border-subtle);
+    cursor: pointer;
+    transition: transform 0.2s, border-color 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent-primary);
+}
+
+.card-img {
+    aspect-ratio: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-img img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.card-body {
+    padding: 16px;
+}
+
+.card-category {
+    font-size: 11px;
+    color: var(--accent-primary);
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.card-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.card-desc {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+.card-muscles {
+    display: flex;
+    gap: 6px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+}
+
+.muscle-tag {
+    padding: 4px 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    font-size: 11px;
+    color: var(--text-secondary);
+}
+
+/* ============================================================
+   ANALYSIS VIEW
+   ============================================================ */
+
+.analysis {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 24px;
+}
+
+@media (max-width: 1000px) {
+    .analysis {
+        grid-template-columns: 1fr;
+    }
+}
+
+.back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-secondary);
+    font-size: 13px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    transition: color 0.2s;
+}
+
+.back-btn:hover {
+    color: var(--accent-primary);
+}
+
+/* ============================================================
+   VIDEO BOX
+   ============================================================ */
+
+.video-box {
+    background: var(--bg-card);
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+    aspect-ratio: 16/10;
+}
+
+.video-box video,
+.video-box canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.video-box canvas {
+    z-index: 2;
+}
+
+/* ============================================================
+   VIDEO OVERLAY
+   ============================================================ */
+
+.overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+}
+
+.stat-box {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
+    padding: 12px 16px;
+    border-radius: 12px;
+}
+
+.accuracy-box {
+    top: 16px;
+    left: 16px;
+}
+
+.phase-box {
+    top: 16px;
+    right: 16px;
+    text-align: center;
+}
+
+.rep-box {
+    bottom: 16px;
+    left: 16px;
+    background: linear-gradient(135deg, #00ff87, #00d4ff);
+    text-align: center;
+}
+
+.stat-box .label {
+    font-size: 10px;
+    text-transform: uppercase;
+    opacity: 0.7;
+}
+
+.stat-box .value {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.rep-box .label,
+.rep-box .value {
+    color: #0a0a0b;
+}
+
+.accuracy-box .value.good {
+    color: var(--accent-primary);
+}
+
+.accuracy-box .value.ok {
+    color: var(--accent-secondary);
+}
+
+.accuracy-box .value.bad {
+    color: var(--accent-error);
+}
+
+.phase-box .value {
+    color: var(--accent-secondary);
+    font-size: 18px;
+}
+
+.phase-box .value.idle {
+    color: var(--text-secondary);
+}
+
+.fps-counter {
+    position: absolute;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.6);
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 11px;
+    color: var(--text-secondary);
+}
+
+/* ============================================================
+   COACH BOX
+   ============================================================ */
+
+.coach-box {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid rgba(168, 85, 247, 0.4);
+    padding: 12px 16px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    max-width: 260px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.coach-box.speaking {
+    border-color: var(--accent-purple);
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+}
+
+.coach-avatar-sm {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #a855f7, #6366f1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.coach-msg {
+    font-size: 13px;
+    line-height: 1.3;
+}
+
+/* ============================================================
+   SIDE PANEL
+   ============================================================ */
+
+.panel {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.panel-card {
+    background: var(--bg-card);
+    border-radius: 16px;
+    padding: 16px;
+    border: 1px solid var(--border-subtle);
+}
+
+.panel-title {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.preview-img {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 12px;
+}
+
+.preview-name {
+    font-size: 20px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.preview-cat {
+    color: var(--accent-primary);
+    font-size: 13px;
+    text-align: center;
+}
+
+/* ============================================================
+   FEEDBACK PANEL
+   ============================================================ */
+
+.feedback-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    font-size: 13px;
+}
+
+.feedback-item:last-child {
+    margin-bottom: 0;
+}
+
+.feedback-item.good {
+    background: rgba(0, 255, 135, 0.1);
+    border-left: 3px solid var(--accent-primary);
+}
+
+.feedback-item.bad {
+    background: rgba(255, 56, 96, 0.1);
+    border-left: 3px solid var(--accent-error);
+}
+
+.feedback-item.warning {
+    background: rgba(255, 193, 7, 0.1);
+    border-left: 3px solid #ffc107;
+    color: #ffc107;
+}
+
+.feedback-icon {
+    font-weight: 700;
+}
+
+/* ============================================================
+   VOICE SETTINGS
+   ============================================================ */
+
+.toggle-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+}
+
+.toggle {
+    width: 44px;
+    height: 24px;
+    background: var(--border-subtle);
+    border-radius: 12px;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.toggle.on {
+    background: var(--accent-primary);
+}
+
+.toggle::after {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    background: white;
+    border-radius: 50%;
+    top: 3px;
+    left: 3px;
+    transition: transform 0.2s;
+}
+
+.toggle.on::after {
+    transform: translateX(20px);
+}
+
+/* ============================================================
+   INSTRUCTIONS
+   ============================================================ */
+
+.instruction {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    font-size: 13px;
+}
+
+.instruction:last-child {
+    margin-bottom: 0;
+}
+
+.instruction-num {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(0, 255, 135, 0.1);
+    color: var(--accent-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.instruction-text {
+    color: var(--text-secondary);
+    padding-top: 2px;
+}
+
+/* ============================================================
+   LOADING
+   ============================================================ */
+
+.loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    min-height: 300px;
+    text-align: center;
+}
+
+.loading-icon {
+    width: 60px;
+    height: 60px;
+    border: 3px solid var(--border-subtle);
+    border-top-color: var(--accent-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 16px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 768px) {
+    .header {
+        padding: 12px 16px;
+    }
+
+    .main {
+        padding: 16px;
+    }
+
+    .voice-banner {
+        flex-direction: column;
+        text-align: center;
+        gap: 12px;
+    }
+
+    .page-title h1 {
+        font-size: 28px;
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}
+    </style>
 </head>
 <body>
     <div id="root"></div>
@@ -20,41 +748,90 @@
         class VoiceCoach {
             constructor() {
                 this.synth = window.speechSynthesis;
-                this.enabled = true; this.lastSpoke = 0; this.minGap = 3000;
-                this.speaking = false; this.message = ""; this.onChange = null;
+                this.enabled = true; 
+                this.lastSpoke = 0; 
+                this.minGap = 3000; // Reduced from 6000
+                this.speaking = false; 
+                this.message = ""; 
+                this.onChange = null;
+                this.hasPromptedToStart = false; // Track if we've already prompted
                 const setVoice = () => { this.voice = this.synth.getVoices().find(v => v.lang.includes('en')) || this.synth.getVoices()[0]; };
                 if (this.synth.getVoices().length) setVoice(); else this.synth.onvoiceschanged = setVoice;
             }
             speak(msg, force = false) {
                 if (!this.enabled || !msg) return;
-                if (!force && Date.now() - this.lastSpoke < this.minGap) return;
+                const now = Date.now();
+                if (!force && now - this.lastSpoke < this.minGap) {
+                    console.log('Voice blocked by timing:', now - this.lastSpoke, 'ms since last');
+                    return;
+                }
+                
+                console.log('Speaking:', msg);
                 this.synth.cancel();
-                const u = new SpeechSynthesisUtterance(msg); u.voice = this.voice; u.rate = 1.1;
+                const u = new SpeechSynthesisUtterance(msg); 
+                u.voice = this.voice; 
+                u.rate = 1.1;
                 u.onstart = () => { this.speaking = true; this.message = msg; this.onChange?.(true, msg); };
                 u.onend = () => { this.speaking = false; this.lastSpoke = Date.now(); this.onChange?.(false, ""); };
                 this.synth.speak(u);
             }
             getFeedback(acc, fb, isMoving, isInPosition) {
-                // Not moving - prompt to start
+                // Not moving - prompt to start (but only once)
                 if (!isMoving) {
-                    return "Start moving! Begin the exercise.";
+                    if (!this.hasPromptedToStart) {
+                        this.hasPromptedToStart = true;
+                        return "Start moving! Begin the exercise.";
+                    }
+                    return null; // Don't keep nagging
                 }
+                
+                // Reset the prompt flag once they start moving
+                if (isMoving && this.hasPromptedToStart) {
+                    this.hasPromptedToStart = false;
+                }
+                
                 // Not in proper position
                 if (!isInPosition) {
                     return "Get into position first.";
                 }
-                // Good form while moving
-                if (acc >= 95) return ["Perfect!", "Great form!", "Excellent!"][Math.floor(Math.random() * 3)];
-                if (acc >= 65) return "Good! Keep going!";
-                // Needs improvement
-                if (fb?.length) {
-                    const f = fb[0];
-                    if (f.includes('elbow') && f.includes('extend')) return "Extend your arms more!";
-                    if (f.includes('elbow') && f.includes('bend')) return "Bend your elbows more!";
-                    if (f.includes('knee') && f.includes('bend')) return "Go lower!";
+                
+                // Check for specific form errors FIRST (prioritize corrections)
+                if (fb?.length > 0) {
+                    const f = fb[0].toLowerCase();
+                    
+                    // Shoulder press specific (from combined.py)
+                    if (f.includes('keep arms moving evenly')) return "Keep your arms moving evenly!";
+                    if (f.includes('stack wrists over elbows')) return "Stack your wrists over your elbows!";
+                    
+                    // Elbow corrections
+                    if (f.includes('left elbow') && f.includes('extend')) return "Extend your left arm more!";
+                    if (f.includes('right elbow') && f.includes('extend')) return "Extend your right arm more!";
+                    if (f.includes('elbow') && f.includes('extend')) return "Straighten your arms more!";
+                    if (f.includes('left elbow') && f.includes('bend')) return "Bend your left elbow more!";
+                    if (f.includes('right elbow') && f.includes('bend')) return "Bend your right elbow more!";
+                    if (f.includes('elbow') && f.includes('bend')) return "Bend your elbows deeper!";
+                    
+                    // Knee corrections
+                    if (f.includes('left knee') && f.includes('bend')) return "Lower down more on left leg!";
+                    if (f.includes('right knee') && f.includes('bend')) return "Lower down more on right leg!";
+                    if (f.includes('knee') && f.includes('bend')) return "Squat lower!";
+                    if (f.includes('left knee') && f.includes('extend')) return "Stand up straighter on left leg!";
+                    if (f.includes('right knee') && f.includes('extend')) return "Stand up straighter on right leg!";
                     if (f.includes('knee') && f.includes('extend')) return "Stand up fully!";
-                    return "Check your form!";
+                    
+                    // Arm raise corrections
+                    if (f.includes('arm raise') && f.includes('extend')) return "Raise your arms higher!";
+                    if (f.includes('arm raise') && f.includes('bend')) return "Lower your arms more!";
+                    
+                    // Generic form check
+                    return "Watch your form!";
                 }
+                
+                // Good form while moving (only if no errors)
+                if (acc >= 95) return ["Perfect!", "Great form!", "Excellent!"][Math.floor(Math.random() * 3)];
+                if (acc >= 75) return "Good! Keep going!";
+                if (acc >= 60) return "Not bad, focus on form!";
+                
                 return "Keep going!";
             }
             announceRep(n) { 
@@ -65,7 +842,10 @@
                 else if (n % 5 === 0) this.speak(`${n}!`, true);
                 else this.speak(`${n}`, true);
             }
-            start(name) { this.speak(`Starting ${name}. Get into position and begin!`, true); }
+            start(name) { 
+                this.hasPromptedToStart = false; // Reset flag for new exercise
+                this.speak(`Starting ${name}. Get into position and begin!`, true); 
+            }
             end(name, reps) { this.speak(`Done! ${reps} reps of ${name}. Great workout!`, true); }
             stop() { this.synth.cancel(); this.speaking = false; }
             setEnabled(v) { this.enabled = v; if (!v) this.stop(); }
@@ -99,7 +879,7 @@
             return total > 0 && (matches / total) >= 0.7; // 70% of angles must match
         };
 
-        const evaluateForm = (angles, ex, currentPhase) => {
+        const evaluateForm = (angles, ex, currentPhase, landmarks) => {
             const phases = ex.phases;
             const phaseNames = Object.keys(phases);
             let bestPh = 'TRANSITION', bestScore = 0;
@@ -125,6 +905,24 @@
                 if (total > 0 && score / total > bestScore) { 
                     bestScore = score / total; 
                     bestPh = ph; 
+                }
+            }
+            
+            // Additional shoulder press specific checks (from combined.py)
+            if (ex.id === 'shoulder_press' && landmarks) {
+                // Symmetry check - both arms should move evenly
+                if (Math.abs(angles.left_elbow - angles.right_elbow) > 20) {
+                    fb.unshift("Keep arms moving evenly");
+                }
+                
+                // Elbow-over-wrist check (wrist should be aligned under elbow)
+                const lw_x = landmarks[15].x; // left wrist
+                const le_x = landmarks[13].x; // left elbow
+                const rw_x = landmarks[16].x; // right wrist
+                const re_x = landmarks[14].x; // right elbow
+                
+                if (Math.abs(le_x - lw_x) > 0.05 || Math.abs(re_x - rw_x) > 0.05) {
+                    fb.unshift("Stack wrists over elbows");
                 }
             }
             
@@ -162,9 +960,8 @@
                     DOWN: { left_elbow: [60, 110], right_elbow: [60, 110] }, 
                     UP: { left_elbow: [155, 180], right_elbow: [155, 180] } 
                 }, 
-                // Key angle to track for movement detection
                 trackAngle: 'left_elbow',
-                movementThreshold: 25, // Minimum angle change to count as movement
+                movementThreshold: 25,
                 tips: ["Feet shoulder-width", "Weights at shoulders", "Press straight up", "Lower with control"] 
             },
             { 
@@ -216,7 +1013,7 @@
                 id: "lateral_raise", 
                 name: "Lateral Raise", 
                 category: "Shoulders", 
-                gif: "https://media1.tenor.com/m/-OavRqpxSaEAAAAC/eleva%C3%A7%C3%A3o-lateral.gif", 
+                gif: "https://media1.tenor.com/m/-OavRqpxSaEAAAAC/elevação-lateral.gif", 
                 muscles: ["Side Delts"], 
                 description: "Wider shoulders", 
                 phases: { 
@@ -233,7 +1030,7 @@
         // ==================== COMPONENTS ====================
         const Header = ({ totalReps }) => (
             <header className="header">
-                <div className="logo"><img src="./FINAL FormFit logo.png" alt="FormFit" className="logo-img"/> Form<span>Fit</span> AI</div>
+                <div className="logo">💪 Form<span>Fit</span> AI</div>
                 <div className="header-right">
                     <div className="stat">
                         <div className="stat-value">{totalReps}</div>
@@ -380,7 +1177,7 @@
             // Movement tracking
             const angleHistory = useRef([]);
             const lastPhaseRef = useRef(null);
-            const repStateRef = useRef('IDLE'); // IDLE -> PHASE1 -> PHASE2 -> counted
+            const repStateRef = useRef('IDLE');
             const lastFB = useRef(0);
             const frameCount = useRef(0);
             const lastFpsTime = useRef(Date.now());
@@ -423,7 +1220,7 @@
                         
                         // Detect movement - check if angle changed significantly
                         let moving = false;
-                        if (angleHistory.current.length >= 10 ) {
+                        if (angleHistory.current.length >= 10) {
                             const recent = angleHistory.current.slice(-10);
                             const min = Math.min(...recent);
                             const max = Math.max(...recent);
@@ -432,8 +1229,13 @@
                         }
                         setIsMoving(moving);
 
-                        // Evaluate form
-                        const { accuracy: acc, phase: ph, feedback: fb } = evaluateForm(angles, exercise, phase);
+                        // Evaluate form (pass landmarks for shoulder press checks)
+                        const { accuracy: acc, phase: ph, feedback: fb } = evaluateForm(angles, exercise, phase, lm);
+                        
+                        // Debug logging
+                        if (fb.length > 0) {
+                            console.log('Form errors detected:', fb);
+                        }
                         
                         // Only show accuracy when moving
                         if (moving) {
@@ -447,8 +1249,8 @@
 
                         // REP COUNTING STATE MACHINE
                         const phaseNames = Object.keys(exercise.phases);
-                        const phase1 = phaseNames[0]; // e.g., DOWN or STANDING
-                        const phase2 = phaseNames[1]; // e.g., UP or BOTTOM
+                        const phase1 = phaseNames[0];
+                        const phase2 = phaseNames[1];
 
                         // Check if truly in phase (not just close)
                         const inPhase1 = isInPhase(angles, exercise.phases[phase1]);
@@ -474,16 +1276,21 @@
                                     onRep();
                                     return newReps;
                                 });
-                                repStateRef.current = 'PHASE1'; // Ready for next rep
+                                repStateRef.current = 'PHASE1';
                                 setRepState('PHASE1');
                             }
                         }
 
-                        // Voice feedback - only when moving
-                        if (now - lastFB.current > 3000) {
+                        // Voice feedback - prioritize form corrections
+                        const hasErrors = fb.length > 0;
+                        const minDelay = hasErrors ? 3000 : 6000; // Faster feedback for errors
+                        
+                        if (now - lastFB.current > minDelay) {
                             const msg = voiceCoach.getFeedback(acc, fb, moving, repStateRef.current !== 'IDLE');
-                            voiceCoach.speak(msg);
-                            lastFB.current = now;
+                            if (msg) {
+                                voiceCoach.speak(msg);
+                                lastFB.current = now;
+                            }
                         }
 
                         // Draw skeleton
@@ -630,7 +1437,6 @@
         };
 
         ReactDOM.createRoot(document.getElementById('root')).render(<App />);
-        
     </script>
 </body>
 </html>
