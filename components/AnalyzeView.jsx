@@ -1,14 +1,14 @@
 // ============================================================
-// ANALYZE VIEW - Exercise Analysis Page
+// ANALYZE VIEW - Exercise Analysis Page (Updated)
 // ============================================================
 
 import React from 'react';
-import VideoOverlay from '../components/VideoOverlay';
-import ExercisePreview from '../components/ExercisePreview';
-import VoiceSettings from '../components/VoiceSettings';
-import FeedbackPanel from '../components/FeedbackPanel';
-import InstructionsPanel from '../components/InstructionsPanel';
-import Loading from '../components/Loading';
+import VideoOverlay from './VideoOverlay';
+import ExercisePreview from './ExercisePreview';
+import VoiceSettings from './VoiceSettings';
+import FeedbackPanel from './FeedbackPanel';
+import InstructionsPanel from './InstructionsPanel';
+import Loading from './Loading';
 import usePoseDetection from '../hooks/usePoseDetection';
 
 const AnalyzeView = ({ 
@@ -24,10 +24,12 @@ const AnalyzeView = ({
         videoRef,
         canvasRef,
         ready,
-        accuracy,
+        isCorrect,
+        errors,
+        angles,
         phase,
         reps,
-        feedback,
+        isMoving,
         fps,
         stopCamera
     } = usePoseDetection(exercise, onRep);
@@ -60,9 +62,12 @@ const AnalyzeView = ({
                     {ready ? (
                         <VideoOverlay
                             fps={fps}
-                            accuracy={accuracy}
+                            isCorrect={isCorrect}
+                            errors={errors}
+                            angles={angles}
                             phase={phase}
                             reps={reps}
+                            isMoving={isMoving}
                             speaking={speaking}
                             coachMsg={coachMsg}
                         />
@@ -80,7 +85,10 @@ const AnalyzeView = ({
                         setVoiceOn={setVoiceOn} 
                     />
                     
-                    <FeedbackPanel feedback={feedback} />
+                    <FeedbackPanel 
+                        errors={errors} 
+                        isMoving={isMoving} 
+                    />
                     
                     <InstructionsPanel tips={exercise.tips} />
 

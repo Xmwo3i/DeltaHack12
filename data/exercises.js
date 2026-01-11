@@ -2,19 +2,27 @@
 // EXERCISE DATABASE
 // ============================================================
 
+import {
+    checkShoulderPressForm,
+    checkSquatForm,
+    checkBicepCurlForm,
+    checkPushUpForm,
+    checkLungeForm,
+    checkLateralRaiseForm
+} from '../utils/poseUtils';
+
 const EXERCISES = [
     {
         id: "shoulder_press",
         name: "Shoulder Press",
         category: "Shoulders",
         difficulty: "Beginner",
-        gif: "https://media1.tenor.com/m/T_vqvD5qG-YAAAAC/shoulder-press-seated-shoulder-press.gif",
+        gif: "https://media1.tenor.com/m/gI-8qCUEko8AAAAC/shoulders-workout.gif",
         muscles: ["Deltoids", "Triceps"],
         description: "Press weights overhead to build shoulders",
-        phases: {
-            DOWN: { left_elbow: [70, 120], right_elbow: [70, 120] },
-            UP: { left_elbow: [150, 180], right_elbow: [150, 180] }
-        },
+        checkForm: checkShoulderPressForm,
+        phaseOrder: ["DOWN", "UP"],
+        movementThreshold: 25,
         tips: [
             "Feet shoulder-width apart",
             "Weights at shoulder height",
@@ -27,13 +35,12 @@ const EXERCISES = [
         name: "Squat",
         category: "Legs",
         difficulty: "Intermediate",
-        gif: "https://media1.tenor.com/m/Pfj8vy41k-0AAAAC/gym.gif",
+        gif: "https://media1.tenor.com/m/ReGdjrNPi-8AAAAC/squat.gif",
         muscles: ["Quads", "Glutes"],
         description: "King of leg exercises for lower body strength",
-        phases: {
-            STANDING: { left_knee: [160, 180], right_knee: [160, 180] },
-            BOTTOM: { left_knee: [70, 110], right_knee: [70, 110] }
-        },
+        checkForm: checkSquatForm,
+        phaseOrder: ["STANDING", "BOTTOM"],
+        movementThreshold: 30,
         tips: [
             "Feet shoulder-width apart",
             "Keep chest up",
@@ -42,17 +49,34 @@ const EXERCISES = [
         ]
     },
     {
-        id: "pushup",
+        id: "bicep_curl",
+        name: "Bicep Curl",
+        category: "Arms",
+        difficulty: "Beginner",
+        gif: "https://media1.tenor.com/m/bnaCLz-vfj4AAAAC/bicep-curls-exercise.gif",
+        muscles: ["Biceps"],
+        description: "Isolate and build your biceps",
+        checkForm: checkBicepCurlForm,
+        phaseOrder: ["DOWN", "UP"],
+        movementThreshold: 40,
+        tips: [
+            "Arms at sides",
+            "Elbows pinned to body",
+            "Curl to shoulders",
+            "Lower slowly"
+        ]
+    },
+    {
+        id: "push_up",
         name: "Push Up",
         category: "Chest",
         difficulty: "Beginner",
-        gif: "https://media1.tenor.com/m/EEJO0ylQ8tAAAAAC/flexiones-basicas.gif",
+        gif: "https://media1.tenor.com/m/pyjEpw7tVD0AAAAC/pushups-push-up.gif",
         muscles: ["Chest", "Triceps"],
         description: "Classic upper body pushing exercise",
-        phases: {
-            UP: { left_elbow: [160, 180], right_elbow: [160, 180] },
-            DOWN: { left_elbow: [70, 110], right_elbow: [70, 110] }
-        },
+        checkForm: checkPushUpForm,
+        phaseOrder: ["UP", "DOWN"],
+        movementThreshold: 30,
         tips: [
             "Hands wider than shoulders",
             "Body in straight line",
@@ -65,13 +89,12 @@ const EXERCISES = [
         name: "Lunge",
         category: "Legs",
         difficulty: "Beginner",
-        gif: "https://media1.tenor.com/m/sZ7VwZ6jrbcAAAAC/gym.gif",
+        gif: "https://media1.tenor.com/m/5i0VeuJQkxkAAAAd/lunges.gif",
         muscles: ["Quads", "Glutes"],
         description: "Build unilateral leg strength",
-        phases: {
-            STANDING: { left_knee: [150, 180], right_knee: [150, 180] },
-            DOWN: { left_knee: [80, 120], right_knee: [80, 120] }
-        },
+        checkForm: checkLungeForm,
+        phaseOrder: ["STANDING", "DOWN"],
+        movementThreshold: 30,
         tips: [
             "Step forward",
             "Both knees at 90°",
@@ -84,13 +107,12 @@ const EXERCISES = [
         name: "Lateral Raise",
         category: "Shoulders",
         difficulty: "Beginner",
-        gif: "https://media1.tenor.com/m/-OavRqpxSaEAAAAC/eleva%C3%A7%C3%A3o-lateral.gif",
+        gif: "https://media1.tenor.com/m/m7PBpjXCkG4AAAAC/lateral-raise.gif",
         muscles: ["Side Delts"],
         description: "Isolate side delts for wider shoulders",
-        phases: {
-            DOWN: { left_arm_raise: [0, 40], right_arm_raise: [0, 40] },
-            UP: { left_arm_raise: [70, 110], right_arm_raise: [70, 110] }
-        },
+        checkForm: checkLateralRaiseForm,
+        phaseOrder: ["DOWN", "UP"],
+        movementThreshold: 25,
         tips: [
             "Dumbbells at sides",
             "Slight elbow bend",

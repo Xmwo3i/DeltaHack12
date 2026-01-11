@@ -1,31 +1,40 @@
 // ============================================================
-// VIDEO OVERLAY COMPONENT
+// VIDEO OVERLAY COMPONENT - Updated for Python-style form checking
 // ============================================================
 
 import React from 'react';
 
-const VideoOverlay = ({ fps, accuracy, phase, reps, speaking, coachMsg }) => {
-    const getAccuracyClass = () => {
-        if (accuracy > 70) return 'good';
-        if (accuracy > 40) return 'ok';
-        return 'bad';
-    };
-
+const VideoOverlay = ({ 
+    fps, 
+    isCorrect, 
+    errors, 
+    angles, 
+    phase, 
+    reps, 
+    isMoving, 
+    speaking, 
+    coachMsg 
+}) => {
     return (
         <div className="overlay">
             {/* FPS Counter */}
             <div className="fps-counter">{fps} FPS</div>
             
-            {/* Accuracy Display */}
-            <div className="stat-box accuracy-box">
-                <div className="label">Accuracy</div>
-                <div className={`value ${getAccuracyClass()}`}>{accuracy}%</div>
+            {/* Form Status (replaces accuracy) */}
+            <div className="stat-box form-status-box">
+                <div className="label">{isMoving ? 'Form' : 'Status'}</div>
+                <div className={`value ${isMoving ? (isCorrect ? 'good' : 'bad') : ''}`}>
+                    {!isMoving ? 'Start Moving' : isCorrect ? 'GOOD!' : 'FIX FORM'}
+                </div>
             </div>
 
-            {/* Phase Display */}
-            <div className="stat-box phase-box">
-                <div className="label">Phase</div>
-                <div className="value">{phase}</div>
+            {/* Angles Display */}
+            <div className="stat-box angles-box">
+                <div className="label">Angles</div>
+                <div className="value angles-value">
+                    L: {Math.round(angles?.left || 0)}° | R: {Math.round(angles?.right || 0)}°
+                </div>
+                <div className="phase-value">Phase: {phase}</div>
             </div>
 
             {/* Rep Counter */}
@@ -38,7 +47,10 @@ const VideoOverlay = ({ fps, accuracy, phase, reps, speaking, coachMsg }) => {
             <div className={`coach-box ${speaking ? 'speaking' : ''}`}>
                 <div className="coach-avatar-sm">🤖</div>
                 <div className="coach-msg">
-                    {coachMsg || (accuracy > 70 ? "Great form!" : "Focus on form")}
+                    {coachMsg || (isMoving 
+                        ? (isCorrect ? "Great form!" : errors?.[0] || "Check your form") 
+                        : "Start exercising!"
+                    )}
                 </div>
             </div>
         </div>
