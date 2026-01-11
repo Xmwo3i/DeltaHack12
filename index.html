@@ -419,7 +419,7 @@
                         // Track angle history for movement detection
                         const trackAngle = exercise.trackAngle || 'left_elbow';
                         angleHistory.current.push(angles[trackAngle]);
-                        if (angleHistory.current.length > 15) angleHistory.current.shift();
+                        if (angleHistory.current.length > 30) angleHistory.current.shift();
                         
                         // Detect movement - check if angle changed significantly
                         let moving = false;
