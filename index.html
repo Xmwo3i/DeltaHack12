@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FormFit AI - Voice Coach</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/pose.js" crossorigin="anonymous"></script>
+    <style>
+        :root{--bg-dark:#0a0a0b;--bg-card:#141418;--accent-primary:#00ff87;--accent-secondary:#00d4ff;--accent-error:#ff3860;--accent-purple:#a855f7;--accent-warning:#ffaa00;--text-primary:#fff;--text-secondary:#8a8a9a;--border-subtle:#2a2a35}*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Outfit',sans-serif;background:var(--bg-dark);color:var(--text-primary);min-height:100vh}.app{min-height:100vh}.header{padding:16px 32px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border-subtle);background:rgba(10,10,11,.95);position:sticky;top:0;z-index:100}.logo{display:flex;align-items:center;gap:10px;font-size:24px;font-weight:800}.logo span{background:linear-gradient(135deg,#00ff87,#00d4ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}.header-right{display:flex;align-items:center;gap:20px}.stat{text-align:center}.stat-value{font-size:20px;font-weight:700;color:var(--accent-primary)}.stat-label{font-size:11px;color:var(--text-secondary);text-transform:uppercase}.main{padding:32px;max-width:1400px;margin:0 auto}.voice-banner{background:linear-gradient(135deg,rgba(168,85,247,.15),rgba(99,102,241,.15));border:1px solid rgba(168,85,247,.3);border-radius:16px;padding:16px 24px;margin-bottom:32px;display:flex;align-items:center;gap:16px}.voice-avatar{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#a855f7,#6366f1);display:flex;align-items:center;justify-content:center;font-size:28px;transition:box-shadow .3s}.voice-avatar.speaking{box-shadow:0 0 20px rgba(168,85,247,.5)}.voice-info{flex:1}.voice-title{font-size:16px;font-weight:700}.voice-status{font-size:13px;color:var(--text-secondary)}.btn{padding:10px 20px;border-radius:10px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;cursor:pointer;border:none;transition:all .2s}.btn-purple{background:linear-gradient(135deg,#a855f7,#6366f1);color:#fff}.btn-primary{background:linear-gradient(135deg,#00ff87,#00d4ff);color:#0a0a0b}.btn-secondary{background:0 0;border:1px solid var(--border-subtle);color:var(--text-primary)}.btn-danger{background:rgba(255,56,96,.2);color:var(--accent-error)}.btn-danger:hover{background:var(--accent-error);color:#fff}.btn-full{width:100%}.page-title{text-align:center;margin-bottom:32px}.page-title h1{font-size:36px;font-weight:800;margin-bottom:8px}.page-title p{color:var(--text-secondary)}.tabs{display:flex;justify-content:center;gap:8px;margin-bottom:32px;flex-wrap:wrap}.tab{padding:10px 20px;border-radius:100px;border:1px solid var(--border-subtle);background:0 0;color:var(--text-secondary);font-family:'Outfit',sans-serif;font-size:13px;cursor:pointer;transition:all .2s}.tab:hover{border-color:var(--accent-primary);color:#fff}.tab.active{background:linear-gradient(135deg,#00ff87,#00d4ff);border-color:transparent;color:#0a0a0b;font-weight:600}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px}.card{background:var(--bg-card);border-radius:16px;overflow:hidden;border:1px solid var(--border-subtle);cursor:pointer;transition:transform .2s,border-color .2s}.card:hover{transform:translateY(-4px);border-color:var(--accent-primary)}.card-img{height:160px;overflow:hidden;background:#000}.card-img img{width:100%;height:100%;object-fit:cover}.card-body{padding:16px}.card-category{font-size:11px;color:var(--accent-primary);text-transform:uppercase;font-weight:600;margin-bottom:4px}.card-title{font-size:18px;font-weight:700;margin-bottom:8px}.card-desc{font-size:13px;color:var(--text-secondary);line-height:1.4}.card-muscles{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}.muscle-tag{padding:4px 10px;background:rgba(255,255,255,.05);border-radius:6px;font-size:11px;color:var(--text-secondary)}.analysis{display:grid;grid-template-columns:1fr 340px;gap:24px}@media (max-width:1000px){.analysis{grid-template-columns:1fr}}.back-btn{display:inline-flex;align-items:center;gap:6px;color:var(--text-secondary);font-size:13px;cursor:pointer;margin-bottom:20px}.back-btn:hover{color:var(--accent-primary)}.video-box{background:var(--bg-card);border-radius:16px;overflow:hidden;position:relative;aspect-ratio:16/10}.video-box video,.video-box canvas{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover}.video-box canvas{z-index:2}.overlay{position:absolute;inset:0;z-index:3;pointer-events:none}.stat-box{position:absolute;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);padding:12px 16px;border-radius:12px}.accuracy-box{top:16px;left:16px}.phase-box{top:16px;right:16px;text-align:center}.rep-box{bottom:16px;left:16px;background:linear-gradient(135deg,#00ff87,#00d4ff);text-align:center}.stat-box .label{font-size:10px;text-transform:uppercase;opacity:.7}.stat-box .value{font-size:32px;font-weight:700;line-height:1}.rep-box .label,.rep-box .value{color:#0a0a0b}.accuracy-box .value.good{color:var(--accent-primary)}.accuracy-box .value.ok{color:var(--accent-secondary)}.accuracy-box .value.bad{color:var(--accent-error)}.phase-box .value{color:var(--accent-secondary);font-size:18px}.phase-box .value.idle{color:var(--accent-warning)}.fps-counter{position:absolute;top:16px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.6);padding:4px 10px;border-radius:8px;font-size:11px;color:var(--text-secondary)}.coach-box{position:absolute;bottom:16px;right:16px;background:rgba(0,0,0,.8);border:1px solid rgba(168,85,247,.4);padding:12px 16px;border-radius:12px;display:flex;align-items:center;gap:10px;max-width:280px}.coach-box.speaking{border-color:var(--accent-purple);box-shadow:0 0 20px rgba(168,85,247,.3)}.coach-avatar-sm{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#a855f7,#6366f1);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}.coach-msg{font-size:13px;line-height:1.3}.panel{display:flex;flex-direction:column;gap:16px}.panel-card{background:var(--bg-card);border-radius:16px;padding:16px;border:1px solid var(--border-subtle)}.panel-title{font-size:15px;font-weight:700;margin-bottom:12px}.preview-img{width:100%;height:140px;object-fit:cover;border-radius:10px;margin-bottom:12px}.preview-name{font-size:20px;font-weight:700;text-align:center}.preview-cat{color:var(--accent-primary);font-size:13px;text-align:center}.feedback-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;margin-bottom:8px;font-size:13px}.feedback-item.good{background:rgba(0,255,135,.1);border-left:3px solid var(--accent-primary)}.feedback-item.bad{background:rgba(255,56,96,.1);border-left:3px solid var(--accent-error)}.feedback-item.warning{background:rgba(255,170,0,.1);border-left:3px solid var(--accent-warning)}.toggle-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0}.toggle{width:44px;height:24px;background:var(--border-subtle);border-radius:12px;position:relative;cursor:pointer}.toggle.on{background:var(--accent-primary)}.toggle::after{content:'';position:absolute;width:18px;height:18px;background:#fff;border-radius:50%;top:3px;left:3px;transition:transform .2s}.toggle.on::after{transform:translateX(20px)}.instruction{display:flex;gap:10px;margin-bottom:10px;font-size:13px}.instruction-num{width:24px;height:24px;border-radius:50%;background:rgba(0,255,135,.1);color:var(--accent-primary);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}.instruction-text{color:var(--text-secondary);padding-top:2px}.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;min-height:300px;text-align:center}.loading-icon{width:60px;height:60px;border:3px solid var(--border-subtle);border-top-color:var(--accent-primary);border-radius:50%;animation:spin 1s linear infinite;margin-bottom:16px}@keyframes spin{to{transform:rotate(360deg)}}@media (max-width:768px){.header{padding:12px 16px}.main{padding:16px}.voice-banner{flex-direction:column;text-align:center}.page-title h1{font-size:28px}.grid{grid-template-columns:1fr}}
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState, useEffect, useRef, useCallback } = React;
+
+        // ==================== VOICE COACH ====================
+        class VoiceCoach {
+            constructor() {
+                this.synth = window.speechSynthesis;
+                this.enabled = true; this.lastSpoke = 0; this.minGap = 3500;
+                this.speaking = false; this.message = ""; this.onChange = null;
+                const setVoice = () => { this.voice = this.synth.getVoices().find(v => v.lang.includes('en')) || this.synth.getVoices()[0]; };
+                if (this.synth.getVoices().length) setVoice(); else this.synth.onvoiceschanged = setVoice;
+            }
+            speak(msg, force = false) {
+                if (!this.enabled || !msg) return;
+                if (!force && Date.now() - this.lastSpoke < this.minGap) return;
+                this.synth.cancel();
+                const u = new SpeechSynthesisUtterance(msg); u.voice = this.voice; u.rate = 1.1;
+                u.onstart = () => { this.speaking = true; this.message = msg; this.onChange?.(true, msg); };
+                u.onend = () => { this.speaking = false; this.lastSpoke = Date.now(); this.onChange?.(false, ""); };
+                this.synth.speak(u);
+            }
+            getFeedback(acc, fb, isMoving, isInPosition) {
+                // Not moving - prompt to start
+                if (!isMoving) {
+                    return "Start moving! Begin the exercise.";
+                }
+                // Not in proper position
+                if (!isInPosition) {
+                    return "Get into position first.";
+                }
+                // Good form while moving
+                if (acc >= 85) return ["Perfect!", "Great form!", "Excellent!"][Math.floor(Math.random() * 3)];
+                if (acc >= 65) return "Good! Keep going!";
+                // Needs improvement
+                if (fb?.length) {
+                    const f = fb[0];
+                    if (f.includes('elbow') && f.includes('extend')) return "Extend your arms more!";
+                    if (f.includes('elbow') && f.includes('bend')) return "Bend your elbows more!";
+                    if (f.includes('knee') && f.includes('bend')) return "Go lower!";
+                    if (f.includes('knee') && f.includes('extend')) return "Stand up fully!";
+                    return "Check your form!";
+                }
+                return "Keep going!";
+            }
+            announceRep(n) { 
+                if (!this.enabled) return; 
+                if (n === 1) this.speak("One!", true);
+                else if (n === 5) this.speak("Five! Great job!", true);
+                else if (n === 10) this.speak("Ten! You're on fire!", true);
+                else if (n % 5 === 0) this.speak(`${n}!`, true);
+                else this.speak(`${n}`, true);
+            }
+            start(name) { this.speak(`Starting ${name}. Get into position and begin!`, true); }
+            end(name, reps) { this.speak(`Done! ${reps} reps of ${name}. Great workout!`, true); }
+            stop() { this.synth.cancel(); this.speaking = false; }
+            setEnabled(v) { this.enabled = v; if (!v) this.stop(); }
+        }
+        const voiceCoach = new VoiceCoach();
+
+        // ==================== POSE UTILS ====================
+        const calcAngle = (a, b, c) => {
+            const v1x = a.x - b.x, v1y = a.y - b.y, v2x = c.x - b.x, v2y = c.y - b.y;
+            return Math.acos(Math.max(-1, Math.min(1, (v1x * v2x + v1y * v2y) / (Math.sqrt(v1x * v1x + v1y * v1y) * Math.sqrt(v2x * v2x + v2y * v2y) + 0.001)))) * 57.2958;
+        };
+
+        const getAngles = (lm) => lm?.length >= 29 ? {
+            left_elbow: calcAngle(lm[11], lm[13], lm[15]), 
+            right_elbow: calcAngle(lm[12], lm[14], lm[16]),
+            left_knee: calcAngle(lm[23], lm[25], lm[27]), 
+            right_knee: calcAngle(lm[24], lm[26], lm[28]),
+            left_arm_raise: calcAngle(lm[23], lm[11], lm[13]), 
+            right_arm_raise: calcAngle(lm[24], lm[12], lm[14])
+        } : null;
+
+        // Check if angle is in phase range
+        const isInPhase = (angles, phaseAngles) => {
+            let matches = 0, total = 0;
+            for (const [name, [min, max]] of Object.entries(phaseAngles)) {
+                if (angles[name] !== undefined) {
+                    total++;
+                    if (angles[name] >= min && angles[name] <= max) matches++;
+                }
+            }
+            return total > 0 && (matches / total) >= 0.7; // 70% of angles must match
+        };
+
+        const evaluateForm = (angles, ex, currentPhase) => {
+            const phases = ex.phases;
+            const phaseNames = Object.keys(phases);
+            let bestPh = 'TRANSITION', bestScore = 0;
+            const fb = [];
+
+            for (const [ph, phAngles] of Object.entries(phases)) {
+                let score = 0, total = 0;
+                for (const [name, [min, max]] of Object.entries(phAngles)) {
+                    if (angles[name] !== undefined) {
+                        total++; 
+                        const v = angles[name];
+                        if (v >= min && v <= max) {
+                            score += 100;
+                        } else { 
+                            const diff = v < min ? min - v : v - max; 
+                            score += Math.max(0, 100 - diff * 2.5); 
+                            if (diff > 20) {
+                                fb.push(`${name.replace(/_/g, ' ')}: ${v < min ? 'extend' : 'bend'} more`);
+                            }
+                        }
+                    }
+                }
+                if (total > 0 && score / total > bestScore) { 
+                    bestScore = score / total; 
+                    bestPh = ph; 
+                }
+            }
+            
+            return { accuracy: bestScore, phase: bestPh, feedback: [...new Set(fb)].slice(0, 2) };
+        };
+
+        const CONNS = [[11,12],[11,13],[13,15],[12,14],[14,16],[11,23],[12,24],[23,24],[23,25],[25,27],[24,26],[26,28]];
+        
+        const drawSkeleton = (ctx, lm, w, h, color) => {
+            ctx.strokeStyle = color; ctx.lineWidth = 3;
+            CONNS.forEach(([a, b]) => { 
+                ctx.beginPath(); 
+                ctx.moveTo(lm[a].x * w, lm[a].y * h); 
+                ctx.lineTo(lm[b].x * w, lm[b].y * h); 
+                ctx.stroke(); 
+            });
+            ctx.fillStyle = color; 
+            for (let i = 11; i < 29; i++) { 
+                ctx.beginPath(); 
+                ctx.arc(lm[i].x * w, lm[i].y * h, 5, 0, 6.28); 
+                ctx.fill(); 
+            }
+        };
+
+        // ==================== EXERCISES ====================
+        const EXERCISES = [
+            { 
+                id: "shoulder_press", 
+                name: "Shoulder Press", 
+                category: "Shoulders", 
+                gif: "https://media1.tenor.com/m/gI-8qCUEko8AAAAC/shoulders-workout.gif", 
+                muscles: ["Deltoids", "Triceps"], 
+                description: "Press weights overhead", 
+                phases: { 
+                    DOWN: { left_elbow: [60, 110], right_elbow: [60, 110] }, 
+                    UP: { left_elbow: [155, 180], right_elbow: [155, 180] } 
+                }, 
+                // Key angle to track for movement detection
+                trackAngle: 'left_elbow',
+                movementThreshold: 25, // Minimum angle change to count as movement
+                tips: ["Feet shoulder-width", "Weights at shoulders", "Press straight up", "Lower with control"] 
+            },
+            { 
+                id: "squat", 
+                name: "Squat", 
+                category: "Legs", 
+                gif: "https://media1.tenor.com/m/ReGdjrNPi-8AAAAC/squat.gif", 
+                muscles: ["Quads", "Glutes"], 
+                description: "Lower body strength", 
+                phases: { 
+                    STANDING: { left_knee: [160, 180], right_knee: [160, 180] }, 
+                    BOTTOM: { left_knee: [70, 110], right_knee: [70, 110] } 
+                }, 
+                trackAngle: 'left_knee',
+                movementThreshold: 30,
+                tips: ["Feet shoulder-width", "Chest up", "Thighs parallel", "Drive through heels"] 
+            },
+            { 
+                id: "bicep_curl", 
+                name: "Bicep Curl", 
+                category: "Arms", 
+                gif: "https://media1.tenor.com/m/bnaCLz-vfj4AAAAC/bicep-curls-exercise.gif", 
+                muscles: ["Biceps"], 
+                description: "Build your biceps", 
+                phases: { 
+                    DOWN: { left_elbow: [150, 180], right_elbow: [150, 180] }, 
+                    UP: { left_elbow: [30, 70], right_elbow: [30, 70] } 
+                }, 
+                trackAngle: 'left_elbow',
+                movementThreshold: 40,
+                tips: ["Arms at sides", "Elbows pinned", "Curl to shoulders", "Lower slowly"] 
+            },
+            { 
+                id: "pushup", 
+                name: "Push Up", 
+                category: "Chest", 
+                gif: "https://media1.tenor.com/m/pyjEpw7tVD0AAAAC/pushups-push-up.gif", 
+                muscles: ["Chest", "Triceps"], 
+                description: "Upper body classic", 
+                phases: { 
+                    UP: { left_elbow: [160, 180], right_elbow: [160, 180] }, 
+                    DOWN: { left_elbow: [70, 110], right_elbow: [70, 110] } 
+                }, 
+                trackAngle: 'left_elbow',
+                movementThreshold: 30,
+                tips: ["Hands wide", "Body straight", "Chest to ground", "Push up fully"] 
+            },
+            { 
+                id: "lunge", 
+                name: "Lunge", 
+                category: "Legs", 
+                gif: "https://media1.tenor.com/m/5i0VeuJQkxkAAAAd/lunges.gif", 
+                muscles: ["Quads", "Glutes"], 
+                description: "Unilateral leg strength", 
+                phases: { 
+                    STANDING: { left_knee: [150, 180], right_knee: [150, 180] }, 
+                    DOWN: { left_knee: [80, 120], right_knee: [80, 120] } 
+                }, 
+                trackAngle: 'left_knee',
+                movementThreshold: 30,
+                tips: ["Step forward", "Both knees 90°", "Front knee over ankle", "Push back"] 
+            },
+            { 
+                id: "lateral_raise", 
+                name: "Lateral Raise", 
+                category: "Shoulders", 
+                gif: "https://media1.tenor.com/m/m7PBpjXCkG4AAAAC/lateral-raise.gif", 
+                muscles: ["Side Delts"], 
+                description: "Wider shoulders", 
+                phases: { 
+                    DOWN: { left_arm_raise: [0, 40], right_arm_raise: [0, 40] }, 
+                    UP: { left_arm_raise: [70, 110], right_arm_raise: [70, 110] } 
+                },
+                trackAngle: 'left_arm_raise',
+                movementThreshold: 30,
+                tips: ["Dumbbells at sides", "Slight elbow bend", "Raise to shoulder height", "Control"] 
+            }
+        ];
+        const CATEGORIES = ['All', 'Shoulders', 'Chest', 'Arms', 'Legs'];
+
+        // ==================== COMPONENTS ====================
+        const Header = ({ totalReps }) => (
+            <header className="header">
+                <div className="logo">💪 Form<span>Fit</span> AI</div>
+                <div className="header-right">
+                    <div className="stat">
+                        <div className="stat-value">{totalReps}</div>
+                        <div className="stat-label">Total Reps</div>
+                    </div>
+                </div>
+            </header>
+        );
+
+        const VoiceBanner = ({ voiceOn, setVoiceOn, speaking }) => (
+            <div className="voice-banner">
+                <div className={`voice-avatar ${speaking ? 'speaking' : ''}`}>🤖</div>
+                <div className="voice-info">
+                    <div className="voice-title">AI Voice Coach</div>
+                    <div className="voice-status">{voiceOn ? "Ready to guide" : "Voice off"}</div>
+                </div>
+                <button className={`btn ${voiceOn ? 'btn-purple' : 'btn-secondary'}`} onClick={() => setVoiceOn(!voiceOn)}>
+                    {voiceOn ? '🔊 On' : '🔇 Off'}
+                </button>
+            </div>
+        );
+
+        const CategoryTabs = ({ categories, active, onChange }) => (
+            <div className="tabs">
+                {categories.map(c => (
+                    <button key={c} className={`tab ${active === c ? 'active' : ''}`} onClick={() => onChange(c)}>{c}</button>
+                ))}
+            </div>
+        );
+
+        const ExerciseCard = ({ exercise, onClick }) => (
+            <div className="card" onClick={onClick}>
+                <div className="card-img"><img src={exercise.gif} alt={exercise.name} loading="lazy" /></div>
+                <div className="card-body">
+                    <div className="card-category">{exercise.category}</div>
+                    <div className="card-title">{exercise.name}</div>
+                    <div className="card-desc">{exercise.description}</div>
+                    <div className="card-muscles">{exercise.muscles.map(m => <span key={m} className="muscle-tag">{m}</span>)}</div>
+                </div>
+            </div>
+        );
+
+        const ExerciseGrid = ({ exercises, onSelect }) => (
+            <div className="grid">
+                {exercises.map(e => <ExerciseCard key={e.id} exercise={e} onClick={() => onSelect(e)} />)}
+            </div>
+        );
+
+        const VideoOverlay = ({ fps, accuracy, phase, reps, speaking, coachMsg, isMoving, repState }) => (
+            <div className="overlay">
+                <div className="fps-counter">{fps} FPS</div>
+                <div className="stat-box accuracy-box">
+                    <div className="label">{isMoving ? 'Accuracy' : 'Status'}</div>
+                    <div className={`value ${isMoving ? (accuracy > 70 ? 'good' : accuracy > 40 ? 'ok' : 'bad') : 'bad'}`}>
+                        {isMoving ? `${accuracy}%` : 'Idle'}
+                    </div>
+                </div>
+                <div className="stat-box phase-box">
+                    <div className="label">Phase</div>
+                    <div className={`value ${!isMoving ? 'idle' : ''}`}>{isMoving ? phase : 'WAITING'}</div>
+                </div>
+                <div className="stat-box rep-box">
+                    <div className="label">Reps</div>
+                    <div className="value">{reps}</div>
+                </div>
+                <div className={`coach-box ${speaking ? 'speaking' : ''}`}>
+                    <div className="coach-avatar-sm">🤖</div>
+                    <div className="coach-msg">{coachMsg || (isMoving ? "Keep going!" : "Start the exercise!")}</div>
+                </div>
+            </div>
+        );
+
+        const ExercisePreview = ({ exercise }) => (
+            <div className="panel-card">
+                <img src={exercise.gif} alt={exercise.name} className="preview-img" />
+                <div className="preview-name">{exercise.name}</div>
+                <div className="preview-cat">{exercise.category}</div>
+            </div>
+        );
+
+        const VoiceSettings = ({ voiceOn, setVoiceOn }) => (
+            <div className="panel-card">
+                <div className="panel-title">🎤 Voice Coach</div>
+                <div className="toggle-row">
+                    <span>Voice Feedback</span>
+                    <div className={`toggle ${voiceOn ? 'on' : ''}`} onClick={() => setVoiceOn(!voiceOn)} />
+                </div>
+            </div>
+        );
+
+        const FeedbackPanel = ({ feedback, isMoving }) => (
+            <div className="panel-card">
+                <div className="panel-title">Feedback</div>
+                {!isMoving ? (
+                    <div className="feedback-item warning">⏳ Start exercising to get feedback</div>
+                ) : feedback.length === 0 ? (
+                    <div className="feedback-item good">✓ Great form!</div>
+                ) : (
+                    feedback.map((f, i) => <div key={i} className="feedback-item bad">! {f}</div>)
+                )}
+            </div>
+        );
+
+        const InstructionsPanel = ({ tips }) => (
+            <div className="panel-card">
+                <div className="panel-title">Tips</div>
+                {tips.map((t, i) => (
+                    <div key={i} className="instruction">
+                        <div className="instruction-num">{i + 1}</div>
+                        <div className="instruction-text">{t}</div>
+                    </div>
+                ))}
+            </div>
+        );
+
+        const Loading = ({ message }) => (
+            <div className="loading">
+                <div className="loading-icon"></div>
+                <div>{message}</div>
+            </div>
+        );
+
+        // ==================== VIEWS ====================
+        const BrowseView = ({ category, setCategory, onSelect, voiceOn, setVoiceOn, speaking }) => {
+            const exercises = category === 'All' ? EXERCISES : EXERCISES.filter(e => e.category === category);
+            return (
+                <>
+                    <VoiceBanner voiceOn={voiceOn} setVoiceOn={setVoiceOn} speaking={speaking} />
+                    <div className="page-title">
+                        <h1>Choose Exercise</h1>
+                        <p>AI form analysis with voice coaching</p>
+                    </div>
+                    <CategoryTabs categories={CATEGORIES} active={category} onChange={setCategory} />
+                    <ExerciseGrid exercises={exercises} onSelect={onSelect} />
+                </>
+            );
+        };
+
+        const AnalyzeView = ({ exercise, onBack, onRep, voiceOn, setVoiceOn, speaking, coachMsg }) => {
+            const videoRef = useRef(null);
+            const canvasRef = useRef(null);
+            const poseRef = useRef(null);
+            
+            // Movement tracking
+            const angleHistory = useRef([]);
+            const lastPhaseRef = useRef(null);
+            const repStateRef = useRef('IDLE'); // IDLE -> PHASE1 -> PHASE2 -> counted
+            const lastFB = useRef(0);
+            const frameCount = useRef(0);
+            const lastFpsTime = useRef(Date.now());
+            const processing = useRef(false);
+            
+            const [ready, setReady] = useState(false);
+            const [accuracy, setAccuracy] = useState(0);
+            const [phase, setPhase] = useState('READY');
+            const [reps, setReps] = useState(0);
+            const [feedback, setFeedback] = useState([]);
+            const [fps, setFps] = useState(0);
+            const [isMoving, setIsMoving] = useState(false);
+            const [repState, setRepState] = useState('IDLE');
+
+            const onResults = useCallback((results) => {
+                const canvas = canvasRef.current;
+                const ctx = canvas?.getContext('2d');
+                if (!ctx) return;
+
+                // FPS
+                frameCount.current++;
+                const now = Date.now();
+                if (now - lastFpsTime.current >= 1000) { 
+                    setFps(frameCount.current); 
+                    frameCount.current = 0; 
+                    lastFpsTime.current = now; 
+                }
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                if (results.poseLandmarks) {
+                    const lm = results.poseLandmarks;
+                    const angles = getAngles(lm);
+                    
+                    if (angles) {
+                        // Track angle history for movement detection
+                        const trackAngle = exercise.trackAngle || 'left_elbow';
+                        angleHistory.current.push(angles[trackAngle]);
+                        if (angleHistory.current.length > 15) angleHistory.current.shift();
+                        
+                        // Detect movement - check if angle changed significantly
+                        let moving = false;
+                        if (angleHistory.current.length >= 10) {
+                            const recent = angleHistory.current.slice(-10);
+                            const min = Math.min(...recent);
+                            const max = Math.max(...recent);
+                            const range = max - min;
+                            moving = range > (exercise.movementThreshold || 25);
+                        }
+                        setIsMoving(moving);
+
+                        // Evaluate form
+                        const { accuracy: acc, phase: ph, feedback: fb } = evaluateForm(angles, exercise, phase);
+                        
+                        // Only show accuracy when moving
+                        if (moving) {
+                            setAccuracy(Math.round(acc));
+                            setFeedback(fb);
+                        } else {
+                            setAccuracy(0);
+                            setFeedback([]);
+                        }
+                        setPhase(ph);
+
+                        // REP COUNTING STATE MACHINE
+                        const phaseNames = Object.keys(exercise.phases);
+                        const phase1 = phaseNames[0]; // e.g., DOWN or STANDING
+                        const phase2 = phaseNames[1]; // e.g., UP or BOTTOM
+
+                        // Check if truly in phase (not just close)
+                        const inPhase1 = isInPhase(angles, exercise.phases[phase1]);
+                        const inPhase2 = isInPhase(angles, exercise.phases[phase2]);
+
+                        // State machine for rep counting
+                        if (moving) {
+                            const currentState = repStateRef.current;
+                            
+                            if (currentState === 'IDLE' && inPhase1) {
+                                repStateRef.current = 'PHASE1';
+                                setRepState('PHASE1');
+                            } 
+                            else if (currentState === 'PHASE1' && inPhase2) {
+                                repStateRef.current = 'PHASE2';
+                                setRepState('PHASE2');
+                            }
+                            else if (currentState === 'PHASE2' && inPhase1) {
+                                // Completed a full rep!
+                                setReps(r => {
+                                    const newReps = r + 1;
+                                    voiceCoach.announceRep(newReps);
+                                    onRep();
+                                    return newReps;
+                                });
+                                repStateRef.current = 'PHASE1'; // Ready for next rep
+                                setRepState('PHASE1');
+                            }
+                        }
+
+                        // Voice feedback - only when moving
+                        if (now - lastFB.current > 4000) {
+                            const msg = voiceCoach.getFeedback(acc, fb, moving, repStateRef.current !== 'IDLE');
+                            voiceCoach.speak(msg);
+                            lastFB.current = now;
+                        }
+
+                        // Draw skeleton
+                        const color = !moving ? '#888888' : (acc > 70 ? '#00ff87' : acc > 40 ? '#00d4ff' : '#ff3860');
+                        drawSkeleton(ctx, lm, canvas.width, canvas.height, color);
+                    }
+                }
+            }, [exercise, onRep, phase]);
+
+            useEffect(() => {
+                const init = async () => {
+                    const pose = new Pose({ 
+                        locateFile: f => `https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/${f}` 
+                    });
+                    pose.setOptions({ 
+                        modelComplexity: 0, 
+                        smoothLandmarks: true, 
+                        minDetectionConfidence: 0.5, 
+                        minTrackingConfidence: 0.5 
+                    });
+                    pose.onResults(onResults);
+                    poseRef.current = pose;
+
+                    try {
+                        const stream = await navigator.mediaDevices.getUserMedia({ 
+                            video: { width: 640, height: 480, facingMode: 'user' } 
+                        });
+                        videoRef.current.srcObject = stream;
+                        await videoRef.current.play();
+                        canvasRef.current.width = videoRef.current.videoWidth;
+                        canvasRef.current.height = videoRef.current.videoHeight;
+                        setReady(true);
+                        voiceCoach.start(exercise.name);
+
+                        let skip = 0;
+                        const process = async () => {
+                            if (!poseRef.current) return;
+                            skip++; 
+                            if (skip % 2 === 0 && !processing.current) { 
+                                processing.current = true; 
+                                await poseRef.current.send({ image: videoRef.current }); 
+                                processing.current = false; 
+                            }
+                            requestAnimationFrame(process);
+                        };
+                        process();
+                    } catch (e) { 
+                        alert("Camera access denied"); 
+                    }
+                };
+                init();
+
+                return () => { 
+                    videoRef.current?.srcObject?.getTracks().forEach(t => t.stop()); 
+                    poseRef.current?.close(); 
+                    voiceCoach.stop(); 
+                };
+            }, []);
+
+            const stop = () => { 
+                voiceCoach.end(exercise.name, reps); 
+                onBack(); 
+            };
+
+            return (
+                <>
+                    <div className="back-btn" onClick={stop}>← Back</div>
+                    <div className="analysis">
+                        <div className="video-box">
+                            <video ref={videoRef} playsInline style={{ transform: 'scaleX(-1)' }} />
+                            <canvas ref={canvasRef} style={{ transform: 'scaleX(-1)' }} />
+                            {ready ? (
+                                <VideoOverlay 
+                                    fps={fps} 
+                                    accuracy={accuracy} 
+                                    phase={phase} 
+                                    reps={reps} 
+                                    speaking={speaking} 
+                                    coachMsg={coachMsg}
+                                    isMoving={isMoving}
+                                    repState={repState}
+                                />
+                            ) : (
+                                <Loading message="Loading camera..." />
+                            )}
+                        </div>
+                        <div className="panel">
+                            <ExercisePreview exercise={exercise} />
+                            <VoiceSettings voiceOn={voiceOn} setVoiceOn={setVoiceOn} />
+                            <FeedbackPanel feedback={feedback} isMoving={isMoving} />
+                            <InstructionsPanel tips={exercise.tips} />
+                            <button className="btn btn-danger btn-full" onClick={stop}>End Workout</button>
+                        </div>
+                    </div>
+                </>
+            );
+        };
+
+        // ==================== APP ====================
+        const App = () => {
+            const [view, setView] = useState('browse');
+            const [exercise, setExercise] = useState(null);
+            const [category, setCategory] = useState('All');
+            const [totalReps, setTotalReps] = useState(0);
+            const [voiceOn, setVoiceOn] = useState(true);
+            const [speaking, setSpeaking] = useState(false);
+            const [coachMsg, setCoachMsg] = useState("");
+
+            useEffect(() => { 
+                voiceCoach.onChange = (s, m) => { setSpeaking(s); setCoachMsg(m); }; 
+            }, []);
+            
+            useEffect(() => { 
+                voiceCoach.setEnabled(voiceOn); 
+            }, [voiceOn]);
+
+            return (
+                <div className="app">
+                    <Header totalReps={totalReps} />
+                    <main className="main">
+                        {view === 'browse' ? (
+                            <BrowseView 
+                                category={category} 
+                                setCategory={setCategory} 
+                                onSelect={e => { setExercise(e); setView('analyze'); }} 
+                                voiceOn={voiceOn} 
+                                setVoiceOn={setVoiceOn} 
+                                speaking={speaking} 
+                            />
+                        ) : (
+                            <AnalyzeView 
+                                exercise={exercise} 
+                                onBack={() => setView('browse')} 
+                                onRep={() => setTotalReps(t => t + 1)} 
+                                voiceOn={voiceOn} 
+                                setVoiceOn={setVoiceOn} 
+                                speaking={speaking} 
+                                coachMsg={coachMsg} 
+                            />
+                        )}
+                    </main>
+                </div>
+            );
+        };
+
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+</body>
+</html>
